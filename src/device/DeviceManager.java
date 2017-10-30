@@ -94,7 +94,7 @@ public class DeviceManager {
 			System.out.println(msg);
 
 			mDeviceList.put(device.getSerialNumber(), "connected");
-			callback.Refresh(mDeviceList);
+			callback.refresh(mDeviceList);
 		}
 
 		/**
@@ -111,7 +111,7 @@ public class DeviceManager {
 			System.out.println(msg);
 
 			mDeviceList.remove(device.getSerialNumber());
-			callback.Refresh(mDeviceList);
+			callback.refresh(mDeviceList);
 		}
 
 		/**
@@ -134,13 +134,13 @@ public class DeviceManager {
 				System.out.println(msg);
 
 				mDeviceList.put(device.getSerialNumber(), "online");
-				callback.Refresh(mDeviceList);
+				callback.refresh(mDeviceList);
 			} else {
 				String msg = "Device change offline " + device.getSerialNumber();
 				System.out.println(msg);
 
 				mDeviceList.put(device.getSerialNumber(), "offline");
-				callback.Refresh(mDeviceList);
+				callback.refresh(mDeviceList);
 			}
 		}
 

@@ -7,12 +7,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-public class AdbManager {
+import ui.RefreshUICallback;
 
-	public void AdbManager() {
+public class AdbManager {
+	private RefreshUICallback callback;
+
+	public AdbManager(RefreshUICallback callback) {
+		this.callback = callback;
 	}
 
-	public String runCommand(String command) {
+	public void runCommand(String command) {
+		callback.append(exeCommand(command));
+	}
+
+	public String exeCommand(String command) {
 		BufferedReader br2 = null;
 		String line = null;
 		InputStream is = null;
@@ -52,7 +60,7 @@ public class AdbManager {
 				}
 			}
 		}
-		return line;
+		return "successed! " + " run commond: " + command;
 	}
 
 }

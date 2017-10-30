@@ -3,5 +3,7 @@ package ui;
 import java.util.HashMap;
 
 public interface RefreshUICallback {
-	public void Refresh(HashMap<String, String> hashmap);
+	public void refresh(HashMap<String, String> hashmap);
+
+	public void append(String append);
 }
