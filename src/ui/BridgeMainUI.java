@@ -92,7 +92,7 @@ public class BridgeMainUI {
 
 		Panel panel_control = new Panel();
 		panel_control.setBackground(Color.WHITE);
-		panel_control.setBounds(260, 10, 232, 45);
+		panel_control.setBounds(282, 10, 262, 45);
 		frmApkautotestbridge.getContentPane().add(panel_control);
 		panel_control.setLayout(null);
 
@@ -111,12 +111,12 @@ public class BridgeMainUI {
 						"adb shell am start -n com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity");
 			}
 		});
-		button.setBounds(117, 10, 76, 23);
+		button.setBounds(176, 10, 76, 23);
 		panel_control.add(button);
 
 		panel = new Panel();
 		panel.setBackground(Color.WHITE);
-		panel.setBounds(260, 61, 232, 263);
+		panel.setBounds(282, 61, 262, 263);
 		frmApkautotestbridge.getContentPane().add(panel);
 		panel.setLayout(null);
 
@@ -129,19 +129,19 @@ public class BridgeMainUI {
 		panel.add(cbx_game);
 
 		txt_id = new TextField();
-		txt_id.setBounds(138, 5, 31, 23);
+		txt_id.setBounds(138, 5, 58, 23);
 		panel.add(txt_id);
 
 		Label label = new Label("\u8D44\u6E90ID");
-		label.setBounds(175, 5, 50, 23);
+		label.setBounds(202, 5, 50, 23);
 		panel.add(label);
 
 		Button btn_del_resource = new Button("\u5220\u9664\u8D44\u6E90");
-		btn_del_resource.setBounds(116, 165, 93, 41);
+		btn_del_resource.setBounds(138, 165, 114, 41);
 		panel.add(btn_del_resource);
 
 		Button btn_del_json = new Button("\u5220\u9664\u914D\u7F6E");
-		btn_del_json.setBounds(10, 165, 93, 41);
+		btn_del_json.setBounds(10, 165, 122, 41);
 		panel.add(btn_del_json);
 
 		btn_pull_resource = new Button("\u62C9\u53D6\u8D44\u6E90");
@@ -167,7 +167,7 @@ public class BridgeMainUI {
 				}
 			}
 		});
-		btn_pull_resource.setBounds(10, 212, 93, 41);
+		btn_pull_resource.setBounds(10, 212, 122, 41);
 		panel.add(btn_pull_resource);
 
 		btn_change_resource = new Button("\u66FF\u6362\u8D44\u6E90");
@@ -180,7 +180,7 @@ public class BridgeMainUI {
 							"adb push " + localUri + "game/game.json  " + REMOTE_URI + "/action/action_v725.json");
 				}
 				if (!txt_id.getText().equals("0") && cbx_action.getState()) {
-					mAdbManager.runCommand("adb shell rm -r /sdcard/tencent/MobileQQ/.apollo/action/" + resID);
+					mAdbManager.runCommand("adb shell rm -r " + REMOTE_URI + "/action/" + resID);
 					mAdbManager.runCommand(
 							"adb push " + localUri + "/action/" + resID + "/. " + REMOTE_URI + "/action/" + resID);
 				}
@@ -189,14 +189,14 @@ public class BridgeMainUI {
 							.runCommand("adb push " + localUri + "game/game.json  " + REMOTE_URI + "/game/game.json");
 				}
 				if (!txt_id.getText().equals("0") && cbx_game.getState()) {
-					mAdbManager.runCommand("adb shell rm -r " + localUri + "/game/" + resID);
+					mAdbManager.runCommand("adb shell rm -r " + REMOTE_URI + "/game/" + resID);
 					mAdbManager.runCommand(
 							"adb push " + localUri + "/game/" + resID + " " + REMOTE_URI + "/game/" + resID);
 				}
 
 			}
 		});
-		btn_change_resource.setBounds(116, 212, 93, 41);
+		btn_change_resource.setBounds(138, 212, 114, 41);
 		panel.add(btn_change_resource);
 
 		Button btn_choose_local = new Button("\u9009\u62E9");
@@ -239,12 +239,12 @@ public class BridgeMainUI {
 		txt_field_remote = new TextField();
 		txt_field_remote.setEditable(false);
 		txt_field_remote.setText("/sdcard/tencent/MobileQQ/.apollo");
-		txt_field_remote.setBounds(10, 74, 199, 23);
+		txt_field_remote.setBounds(10, 74, 242, 23);
 		panel.add(txt_field_remote);
 
 		txt_field_local = new TextField();
 		txt_field_local.setEditable(false);
-		txt_field_local.setBounds(10, 132, 199, 23);
+		txt_field_local.setBounds(10, 132, 242, 23);
 		panel.add(txt_field_local);
 
 		btn_open_local = new Button("\u6253\u5F00");
@@ -260,13 +260,28 @@ public class BridgeMainUI {
 		panel_devices = new TextField();
 		panel_devices.setBackground(Color.WHITE);
 		panel_devices.setEditable(false);
-		panel_devices.setBounds(10, 10, 244, 314);
+		panel_devices.setBounds(10, 10, 266, 314);
 		frmApkautotestbridge.getContentPane().add(panel_devices);
 
 		txt_area_log = new TextArea();
 		txt_area_log.setBackground(Color.WHITE);
 		txt_area_log.setBounds(10, 332, 815, 420);
 		frmApkautotestbridge.getContentPane().add(txt_area_log);
+		
+		Panel panel_1 = new Panel();
+		panel_1.setLayout(null);
+		panel_1.setBackground(Color.WHITE);
+		panel_1.setBounds(550, 10, 262, 45);
+		frmApkautotestbridge.getContentPane().add(panel_1);
+		
+		Button btn_refresh_ip = new Button("\u5237\u65B0\u672C\u673AIP");
+		btn_refresh_ip.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mAdbManager.runCommand("ipconfig ");
+			}
+		});
+		btn_refresh_ip.setBounds(176, 10, 76, 23);
+		panel_1.add(btn_refresh_ip);
 		btn_del_json.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (cbx_action.getState()) {

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import core.StreamGobbler;
 import ui.RefreshUICallback;
 
 public class AdbManager {
@@ -17,70 +18,30 @@ public class AdbManager {
 	}
 
 	public void runCommand(String command) {
-		callback.append(exeCommand(command));
+		// callback.append(exeCommand(command));
+		try {
+			exeCommandThread(command);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public String exeCommand(String command) {
-		StringBuilder result = new StringBuilder();
+	public String exeCommandThread(String cmd) throws IOException, InterruptedException {
+		String msg = String.format("execute cmd:%s", cmd);
 
-		BufferedReader bufrIn = null;
-		BufferedReader bufrError = null;
-		String line = null;
-		InputStream is = null;
-		InputStreamReader isReader = null;
-		try {
-			Process proc = Runtime.getRuntime().exec(command);
-			// 方法阻塞, 等待命令执行完成（成功会返回0）
+		callback.append("--------Run Cmd:" + cmd);
 
-			// 获取命令执行结果, 有两个结果: 正常的输出 和 错误的输出（PS: 子进程的输出就是主进程的输入）
-			// bufrIn = new BufferedReader(new InputStreamReader(proc.getInputStream(),
-			// "UTF-8"));
-			bufrError = new BufferedReader(new InputStreamReader(proc.getErrorStream(), "GBK"));
+		Process process = Runtime.getRuntime().exec(cmd);
+		// 消费掉IO流，防止程序被阻塞卡死
+		new StreamGobbler(process.getInputStream(), "normal", callback).start();
+		new StreamGobbler(process.getErrorStream(), "error", callback).start();
 
-			// 读取输出
-			/*
-			 * while ((line = bufrIn.readLine()) != null) {
-			 * result.append(line).append('\n'); }
-			 */
+		int exitCode = process.waitFor();
+		boolean flag = (0 == exitCode);
+		return "exitCode:" + flag;
 
-			while ((line = bufrError.readLine()) != null) {
-				result.append(line).append('\n');
-			}
-		} catch (Exception e) {
-			return result.toString();
-		} finally {
-			if (isReader != null) {
-				try {
-					isReader.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-				}
-			}
-
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-				}
-			}
-
-			if (bufrIn != null) {
-				try {
-					bufrIn.close();
-				} catch (IOException e) {
-					// TODO
-				}
-			}
-			if (bufrError != null) {
-				try {
-					bufrError.close();
-				} catch (IOException e) {
-					// TODO
-				}
-			}
-		}
-		return "-------successed !" + command + "\n" + result.toString();
 	}
 
 }
