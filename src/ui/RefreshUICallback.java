@@ -4,6 +4,6 @@ import java.util.HashMap;
 
 public interface RefreshUICallback {
 	public void refresh(HashMap<String, String> hashmap);
-
-	public void append(String append);
+	
+	public void append(String append, int level);
 }

@@ -31,7 +31,7 @@ public class AdbManager {
 	public String exeCommandThread(String cmd) throws IOException, InterruptedException {
 		String msg = String.format("execute cmd:%s", cmd);
 
-		callback.append("--------Run Cmd:" + cmd);
+		callback.append("--------Run Cmd:" + cmd,0);
 
 		Process process = Runtime.getRuntime().exec(cmd);
 		// 消费掉IO流，防止程序被阻塞卡死

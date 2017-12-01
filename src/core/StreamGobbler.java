@@ -13,6 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class StreamGobbler extends Thread {
+	public static final int GAME_RES_GBK_CHECK = 0;
+	public static final int GAME_SSO_REQUEST_CHECK = 1;
+
+	public static int mFilterMode = -1;
+
 	private RefreshUICallback callback;
 
 	private static final String ERROR_MSG = "error";
@@ -50,30 +55,45 @@ public final class StreamGobbler extends Thread {
 	public void run() {
 		boolean isChinese = false;
 		StringBuilder log = new StringBuilder();
-		StringBuilder result = new StringBuilder();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		try {
 			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-				if (isChinese(line)) {
+				if (mFilterMode == GAME_RES_GBK_CHECK && isChinese(line)) {
 					isChinese = true;
 					log.append(line + '\n');
-					result.append("---------------Exception:has GBK string--------------").append('\n');
-					result.append(line).append('\n');
-					result.append("---------------Exception:has End--------------").append('\n');
+					callback.append("\n---------------Exception:has GBK string--------------\n", -1);
+					callback.append(line, -1);
+					callback.append("\n---------------Exception:has End--------------\n", -1);
+				}
+				if (mFilterMode == GAME_SSO_REQUEST_CHECK) {
+					if (line.contains("[doCMGameReq]")) {
+						String[] arr = line.split(",");
+						callback.append(arr[1], 0);
+					}
+					if (line.contains("ret")) {
+						String[] arr = line.split(",");
+						
+						callback.append(arr[0], 0);
+					}
 				} else
-					result.append(line).append('\n');
+					callback.append(line, 0);
 			}
 		} catch (IOException e) {
-			System.out.println("-------IOException !" + result.toString());
-			callback.append(result.toString());
+			callback.append("-------IOException !" + e.toString(), -1);
 		} finally {
 			if (isChinese) {
-				result.append('\n').append("---------------Exception:has GBK string--------------").append('\n');
-				result.append(log.toString());
+				callback.append('\n' + "---------------Exception:has GBK string--------------", -1);
+				callback.append('\n' + log.toString(), -1);
 			}
-			System.out.println(result.toString());
-			callback.append(result.toString());
+			callback.append("\n", 0);
+			try {
+				reader.close();
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 
 	}

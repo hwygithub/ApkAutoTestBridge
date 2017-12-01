@@ -11,11 +11,22 @@ import javax.swing.JLabel;
 
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import device.AdbManager;
 import device.DeviceManager;
 import javax.swing.JTextPane;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
+import core.StreamGobbler;
+
 import javax.swing.JList;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -55,6 +66,7 @@ public class BridgeMainUI {
 	private String localUri;
 	private static String REMOTE_URI = "/sdcard/tencent/MobileQQ/.apollo";
 	private Button btn_open_local;
+	private Panel panel_1;
 
 	/**
 	 * Launch the application.
@@ -86,13 +98,13 @@ public class BridgeMainUI {
 		mAdbManager = new AdbManager(new RefreshLogPanel());
 		frmApkautotestbridge = new JFrame();
 		frmApkautotestbridge.setTitle("ApkAutoTestBridge");
-		frmApkautotestbridge.setBounds(100, 100, 838, 800);
+		frmApkautotestbridge.setBounds(100, 100, 982, 900);
 		frmApkautotestbridge.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmApkautotestbridge.getContentPane().setLayout(null);
 
 		Panel panel_control = new Panel();
 		panel_control.setBackground(Color.WHITE);
-		panel_control.setBounds(282, 10, 262, 45);
+		panel_control.setBounds(546, 73, 410, 45);
 		frmApkautotestbridge.getContentPane().add(panel_control);
 		panel_control.setLayout(null);
 
@@ -111,12 +123,21 @@ public class BridgeMainUI {
 						"adb shell am start -n com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity");
 			}
 		});
-		button.setBounds(176, 10, 76, 23);
+		button.setBounds(102, 10, 76, 23);
 		panel_control.add(button);
+
+		Button btn_refresh_ip = new Button("\u5237\u65B0\u672C\u673AIP");
+		btn_refresh_ip.setBounds(184, 10, 66, 23);
+		panel_control.add(btn_refresh_ip);
+		btn_refresh_ip.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mAdbManager.runCommand("ipconfig ");
+			}
+		});
 
 		panel = new Panel();
 		panel.setBackground(Color.WHITE);
-		panel.setBounds(282, 61, 262, 263);
+		panel.setBounds(10, 10, 262, 267);
 		frmApkautotestbridge.getContentPane().add(panel);
 		panel.setLayout(null);
 
@@ -174,6 +195,8 @@ public class BridgeMainUI {
 		btn_change_resource.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String resID = txt_id.getText();
+
+				StreamGobbler.mFilterMode = StreamGobbler.GAME_RES_GBK_CHECK;
 
 				if (txt_id.getText().equals("0") && cbx_action.getState()) {
 					mAdbManager.runCommand(
@@ -260,28 +283,29 @@ public class BridgeMainUI {
 		panel_devices = new TextField();
 		panel_devices.setBackground(Color.WHITE);
 		panel_devices.setEditable(false);
-		panel_devices.setBounds(10, 10, 266, 314);
+		panel_devices.setBounds(546, 10, 410, 51);
 		frmApkautotestbridge.getContentPane().add(panel_devices);
 
 		txt_area_log = new TextArea();
 		txt_area_log.setBackground(Color.WHITE);
-		txt_area_log.setBounds(10, 332, 815, 420);
+		txt_area_log.setBounds(10, 283, 946, 569);
 		frmApkautotestbridge.getContentPane().add(txt_area_log);
-		
-		Panel panel_1 = new Panel();
-		panel_1.setLayout(null);
+
+		panel_1 = new Panel();
 		panel_1.setBackground(Color.WHITE);
-		panel_1.setBounds(550, 10, 262, 45);
+		panel_1.setBounds(278, 10, 262, 267);
 		frmApkautotestbridge.getContentPane().add(panel_1);
-		
-		Button btn_refresh_ip = new Button("\u5237\u65B0\u672C\u673AIP");
-		btn_refresh_ip.addActionListener(new ActionListener() {
+		panel_1.setLayout(null);
+
+		Button btn_check_sso = new Button("sso\u4E0A\u62A5\u68C0\u6D4B");
+		btn_check_sso.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mAdbManager.runCommand("ipconfig ");
+				StreamGobbler.mFilterMode = StreamGobbler.GAME_SSO_REQUEST_CHECK;
+				mAdbManager.runCommand("adb logcat -v raw -s VasExtensionHandler ");
 			}
 		});
-		btn_refresh_ip.setBounds(176, 10, 76, 23);
-		panel_1.add(btn_refresh_ip);
+		btn_check_sso.setBounds(10, 10, 114, 41);
+		panel_1.add(btn_check_sso);
 		btn_del_json.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (cbx_action.getState()) {
@@ -336,7 +360,7 @@ public class BridgeMainUI {
 		}
 
 		@Override
-		public void append(String append) {
+		public void append(String append, int level) {
 
 		}
 
@@ -349,9 +373,10 @@ public class BridgeMainUI {
 		}
 
 		@Override
-		public void append(String append) {
-			txt_area_log.append(append);
-			txt_area_log.append("\n");
+		public void append(String append, int level) {
+			txt_area_log.append(append + "\n");
 		}
+
 	}
+
 }
