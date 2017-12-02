@@ -13,10 +13,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class StreamGobbler extends Thread {
-	public static final int GAME_RES_GBK_CHECK = 0;
-	public static final int GAME_SSO_REQUEST_CHECK = 1;
+	public static boolean GAME_RES_GBK_CHECK = false;
+	public static boolean GAME_SSO_REQUEST_CHECK = false;
 
-	public static int mFilterMode = -1;
+	public static boolean isProcessAlive = true;
 
 	private RefreshUICallback callback;
 
@@ -59,22 +59,26 @@ public final class StreamGobbler extends Thread {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		try {
 			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-				if (mFilterMode == GAME_RES_GBK_CHECK && isChinese(line)) {
+				if (!isProcessAlive) {
+					reader.close();
+					break;
+				}
+				if (GAME_RES_GBK_CHECK && isChinese(line)) {
 					isChinese = true;
 					log.append(line + '\n');
 					callback.append("\n---------------Exception:has GBK string--------------\n", -1);
 					callback.append(line, -1);
 					callback.append("\n---------------Exception:has End--------------\n", -1);
 				}
-				if (mFilterMode == GAME_SSO_REQUEST_CHECK) {
+				if (GAME_SSO_REQUEST_CHECK) {
 					if (line.contains("[doCMGameReq]")) {
 						String[] arr = line.split(",");
-						callback.append(arr[1], 0);
+						callback.append("sso request:" + arr[1], 0);
 					}
 					if (line.contains("ret")) {
 						String[] arr = line.split(",");
-						
-						callback.append(arr[0], 0);
+
+						callback.append("¡ú " + arr[0], 0);
 					}
 				} else
 					callback.append(line, 0);

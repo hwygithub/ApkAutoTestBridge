@@ -196,7 +196,7 @@ public class BridgeMainUI {
 			public void actionPerformed(ActionEvent arg0) {
 				String resID = txt_id.getText();
 
-				StreamGobbler.mFilterMode = StreamGobbler.GAME_RES_GBK_CHECK;
+				StreamGobbler.GAME_RES_GBK_CHECK = true;
 
 				if (txt_id.getText().equals("0") && cbx_action.getState()) {
 					mAdbManager.runCommand(
@@ -300,12 +300,24 @@ public class BridgeMainUI {
 		Button btn_check_sso = new Button("sso\u4E0A\u62A5\u68C0\u6D4B");
 		btn_check_sso.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				StreamGobbler.mFilterMode = StreamGobbler.GAME_SSO_REQUEST_CHECK;
+				StreamGobbler.GAME_SSO_REQUEST_CHECK = true;
+				mAdbManager.runCommand("adb logcat -c ");
 				mAdbManager.runCommand("adb logcat -v raw -s VasExtensionHandler ");
+
 			}
 		});
 		btn_check_sso.setBounds(10, 10, 114, 41);
 		panel_1.add(btn_check_sso);
+
+		Button btn_stop_sso_check = new Button("\u505C\u6B62\u68C0\u6D4B");
+		btn_stop_sso_check.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				StreamGobbler.GAME_SSO_REQUEST_CHECK = false;
+				mAdbManager.stopCommand();
+			}
+		});
+		btn_stop_sso_check.setBounds(138, 10, 114, 41);
+		panel_1.add(btn_stop_sso_check);
 		btn_del_json.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (cbx_action.getState()) {
@@ -378,5 +390,4 @@ public class BridgeMainUI {
 		}
 
 	}
-
 }

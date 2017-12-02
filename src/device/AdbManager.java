@@ -12,6 +12,7 @@ import ui.RefreshUICallback;
 
 public class AdbManager {
 	private RefreshUICallback callback;
+	private Process process;
 
 	public AdbManager(RefreshUICallback callback) {
 		this.callback = callback;
@@ -28,17 +29,25 @@ public class AdbManager {
 		}
 	}
 
+	public void stopCommand() {
+		StreamGobbler.isProcessAlive = false;
+	}
+
 	public String exeCommandThread(String cmd) throws IOException, InterruptedException {
+		StreamGobbler.isProcessAlive = true;
+
 		String msg = String.format("execute cmd:%s", cmd);
 
-		callback.append("--------Run Cmd:" + cmd,0);
+		callback.append("--------Run Cmd:" + cmd, 0);
 
-		Process process = Runtime.getRuntime().exec(cmd);
+		process = Runtime.getRuntime().exec(cmd);
 		// 消费掉IO流，防止程序被阻塞卡死
-		new StreamGobbler(process.getInputStream(), "normal", callback).start();
-		new StreamGobbler(process.getErrorStream(), "error", callback).start();
-
-		int exitCode = process.waitFor();
+		StreamGobbler gobbler = new StreamGobbler(process.getInputStream(), "normal", callback);
+		StreamGobbler errorGobble = new StreamGobbler(process.getErrorStream(), "error", callback);
+		gobbler.start();
+		errorGobble.start();
+		// int exitCode = process.waitFor();
+		int exitCode = 0;
 		boolean flag = (0 == exitCode);
 		return "exitCode:" + flag;
 
