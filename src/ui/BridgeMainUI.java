@@ -200,7 +200,7 @@ public class BridgeMainUI {
 
 				if (txt_id.getText().equals("0") && cbx_action.getState()) {
 					mAdbManager.runCommand(
-							"adb push " + localUri + "game/game.json  " + REMOTE_URI + "/action/action_v725.json");
+							"adb push " + localUri + "/action/action_v725.json  " + REMOTE_URI + "/action/action_v725.json");
 				}
 				if (!txt_id.getText().equals("0") && cbx_action.getState()) {
 					mAdbManager.runCommand("adb shell rm -r " + REMOTE_URI + "/action/" + resID);
@@ -209,13 +209,15 @@ public class BridgeMainUI {
 				}
 				if (txt_id.getText().equals("0") && cbx_game.getState()) {
 					mAdbManager
-							.runCommand("adb push " + localUri + "game/game.json  " + REMOTE_URI + "/game/game.json");
+							.runCommand("adb push " + localUri + "/game/game.json  " + REMOTE_URI + "/game/game.json");
 				}
 				if (!txt_id.getText().equals("0") && cbx_game.getState()) {
 					mAdbManager.runCommand("adb shell rm -r " + REMOTE_URI + "/game/" + resID);
 					mAdbManager.runCommand(
 							"adb push " + localUri + "/game/" + resID + " " + REMOTE_URI + "/game/" + resID);
 				}
+				
+				StreamGobbler.GAME_RES_GBK_CHECK = false;
 
 			}
 		});

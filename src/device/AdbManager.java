@@ -36,8 +36,6 @@ public class AdbManager {
 	public String exeCommandThread(String cmd) throws IOException, InterruptedException {
 		StreamGobbler.isProcessAlive = true;
 
-		String msg = String.format("execute cmd:%s", cmd);
-
 		callback.append("--------Run Cmd:" + cmd, 0);
 
 		process = Runtime.getRuntime().exec(cmd);
@@ -46,8 +44,9 @@ public class AdbManager {
 		StreamGobbler errorGobble = new StreamGobbler(process.getErrorStream(), "error", callback);
 		gobbler.start();
 		errorGobble.start();
-		// int exitCode = process.waitFor();
 		int exitCode = 0;
+		if (!StreamGobbler.GAME_SSO_REQUEST_CHECK)
+			exitCode = process.waitFor();
 		boolean flag = (0 == exitCode);
 		return "exitCode:" + flag;
 
