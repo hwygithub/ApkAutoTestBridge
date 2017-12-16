@@ -49,6 +49,7 @@ public class BridgeMainUI {
 
 	private JFrame frmApkautotestbridge;
 	private TextArea txt_area_log;
+	private TextArea txt_area_check;
 	private TextField panel_devices;
 
 	private AdbManager mAdbManager;
@@ -98,13 +99,13 @@ public class BridgeMainUI {
 		mAdbManager = new AdbManager(new RefreshLogPanel());
 		frmApkautotestbridge = new JFrame();
 		frmApkautotestbridge.setTitle("ApkAutoTestBridge");
-		frmApkautotestbridge.setBounds(100, 100, 982, 900);
+		frmApkautotestbridge.setBounds(100, 100, 982, 695);
 		frmApkautotestbridge.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmApkautotestbridge.getContentPane().setLayout(null);
 
 		Panel panel_control = new Panel();
 		panel_control.setBackground(Color.WHITE);
-		panel_control.setBounds(546, 73, 410, 45);
+		panel_control.setBounds(10, 67, 262, 45);
 		frmApkautotestbridge.getContentPane().add(panel_control);
 		panel_control.setLayout(null);
 
@@ -137,7 +138,7 @@ public class BridgeMainUI {
 
 		panel = new Panel();
 		panel.setBackground(Color.WHITE);
-		panel.setBounds(10, 10, 262, 267);
+		panel.setBounds(10, 118, 262, 267);
 		frmApkautotestbridge.getContentPane().add(panel);
 		panel.setLayout(null);
 
@@ -171,8 +172,8 @@ public class BridgeMainUI {
 				String resID = txt_id.getText();
 
 				if (txt_id.getText().equals("0") && cbx_action.getState()) {
-					mAdbManager.runCommand("adb pull " + REMOTE_URI + "/action/action_v725.json" + " " + localUri
-							+ "/action/action_v725.json");
+					mAdbManager.runCommand("adb pull " + REMOTE_URI + "/action/*.json" + " " + localUri
+							+ "/action/action.json");
 				}
 				if (!txt_id.getText().equals("0") && cbx_action.getState()) {
 					mAdbManager.runCommand(
@@ -180,7 +181,7 @@ public class BridgeMainUI {
 				}
 				if (txt_id.getText().equals("0") && cbx_game.getState()) {
 					mAdbManager.runCommand(
-							"adb pull " + REMOTE_URI + "/game/game.json" + " " + localUri + "/game/game.json");
+							"adb pull " + REMOTE_URI + "/game/*.json" + " " + localUri + "/game/game.json");
 				}
 				if (!txt_id.getText().equals("0") && cbx_game.getState()) {
 					mAdbManager.runCommand(
@@ -196,11 +197,11 @@ public class BridgeMainUI {
 			public void actionPerformed(ActionEvent arg0) {
 				String resID = txt_id.getText();
 
-				StreamGobbler.GAME_RES_GBK_CHECK = true;
+				AdbManager.mGameCheckMode = StreamGobbler.GAME_RES_GBK_CHECK;
 
 				if (txt_id.getText().equals("0") && cbx_action.getState()) {
-					mAdbManager.runCommand(
-							"adb push " + localUri + "/action/action_v725.json  " + REMOTE_URI + "/action/action_v725.json");
+					mAdbManager.runCommand("adb push " + localUri + "/action/*.json  " + REMOTE_URI
+							+ "/action/action_v725.json");
 				}
 				if (!txt_id.getText().equals("0") && cbx_action.getState()) {
 					mAdbManager.runCommand("adb shell rm -r " + REMOTE_URI + "/action/" + resID);
@@ -209,15 +210,13 @@ public class BridgeMainUI {
 				}
 				if (txt_id.getText().equals("0") && cbx_game.getState()) {
 					mAdbManager
-							.runCommand("adb push " + localUri + "/game/game.json  " + REMOTE_URI + "/game/game.json");
+							.runCommand("adb push " + localUri + "/game/*.json  " + REMOTE_URI + "/game/game.json");
 				}
 				if (!txt_id.getText().equals("0") && cbx_game.getState()) {
 					mAdbManager.runCommand("adb shell rm -r " + REMOTE_URI + "/game/" + resID);
 					mAdbManager.runCommand(
 							"adb push " + localUri + "/game/" + resID + " " + REMOTE_URI + "/game/" + resID);
 				}
-				
-				StreamGobbler.GAME_RES_GBK_CHECK = false;
 
 			}
 		});
@@ -285,48 +284,74 @@ public class BridgeMainUI {
 		panel_devices = new TextField();
 		panel_devices.setBackground(Color.WHITE);
 		panel_devices.setEditable(false);
-		panel_devices.setBounds(546, 10, 410, 51);
+		panel_devices.setBounds(10, 10, 262, 51);
 		frmApkautotestbridge.getContentPane().add(panel_devices);
 
 		txt_area_log = new TextArea();
 		txt_area_log.setBackground(Color.WHITE);
-		txt_area_log.setBounds(10, 283, 946, 569);
+		txt_area_log.setBounds(278, 10, 678, 375);
 		frmApkautotestbridge.getContentPane().add(txt_area_log);
 
 		panel_1 = new Panel();
 		panel_1.setBackground(Color.WHITE);
-		panel_1.setBounds(278, 10, 262, 267);
+		panel_1.setBounds(10, 391, 262, 267);
 		frmApkautotestbridge.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 
-		Button btn_check_sso = new Button("sso\u4E0A\u62A5\u68C0\u6D4B");
-		btn_check_sso.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				StreamGobbler.GAME_SSO_REQUEST_CHECK = true;
-				mAdbManager.runCommand("adb logcat -c ");
-				mAdbManager.runCommand("adb logcat -v raw -s VasExtensionHandler ");
+		Checkbox cbx_sso_check = new Checkbox("\u6E38\u620F\u4E0A\u62A5\u68C0\u6D4B");
+		cbx_sso_check.setState(true);
+		cbx_sso_check.setBounds(10, 10, 101, 23);
+		panel_1.add(cbx_sso_check);
 
+		Checkbox cbx_file_check = new Checkbox("\u6E38\u620F\u8D44\u6E90\u68C0\u6D4B");
+		cbx_file_check.setState(true);
+		cbx_file_check.setBounds(140, 10, 101, 23);
+		panel_1.add(cbx_file_check);
+
+		Button btn_check = new Button("\u5F00\u59CB\u68C0\u6D4B");
+		btn_check.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				AdbManager.mGameCheckMode = StreamGobbler.GAME_PLAYING_CHECK;
+
+				mAdbManager.runCommand("adb logcat -c ");
+				String cmd = "adb logcat -v raw -s ";
+
+				if (cbx_sso_check.getState()) {
+					StreamGobbler.GAME_SSO_REQUEST_CHECK = true;
+					mAdbManager.runCommand(cmd + "VasExtensionHandler");
+				}
+				if (cbx_file_check.getState()) {
+					StreamGobbler.GAME_FILE_CHECK = true;
+					mAdbManager.runCommand(cmd + "ApolloGameRscVerify");
+				}
+				btn_check.setEnabled(false);
 			}
 		});
-		btn_check_sso.setBounds(10, 10, 114, 41);
-		panel_1.add(btn_check_sso);
+		btn_check.setBounds(10, 39, 124, 41);
+		panel_1.add(btn_check);
 
 		Button btn_stop_sso_check = new Button("\u505C\u6B62\u68C0\u6D4B");
 		btn_stop_sso_check.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				StreamGobbler.GAME_SSO_REQUEST_CHECK = false;
 				mAdbManager.stopCommand();
+				btn_check.setEnabled(true);
 			}
 		});
-		btn_stop_sso_check.setBounds(138, 10, 114, 41);
+		btn_stop_sso_check.setBounds(140, 39, 114, 41);
 		panel_1.add(btn_stop_sso_check);
+
+		txt_area_check = new TextArea();
+		txt_area_check.setBackground(Color.WHITE);
+		txt_area_check.setBounds(278, 391, 678, 267);
+		frmApkautotestbridge.getContentPane().add(txt_area_check);
+
 		btn_del_json.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (cbx_action.getState()) {
-					mAdbManager.runCommand("adb shell rm -r /sdcard/tencent/MobileQQ/.apollo/action/action_v725.json");
+					mAdbManager.runCommand("adb shell rm -r /sdcard/tencent/MobileQQ/.apollo/action/*.json");
 				}
 				if (cbx_game.getState()) {
-					mAdbManager.runCommand("adb shell rm -r /sdcard/tencent/MobileQQ/.apollo/game/game.json");
+					mAdbManager.runCommand("adb shell rm -r /sdcard/tencent/MobileQQ/.apollo/game/*.json");
 				}
 			}
 		});
@@ -387,8 +412,29 @@ public class BridgeMainUI {
 		}
 
 		@Override
+		public void append(String append, int mode) {
+			switch (mode) {
+			case 0:
+				txt_area_log.append(append + "\n");
+				break;
+			case 1:
+				txt_area_check.append(append + "\n");
+				break;
+			}
+
+		}
+
+	}
+
+	private class RefreshCheckPanel implements RefreshUICallback {
+
+		@Override
+		public void refresh(HashMap<String, String> deviceList) {
+		}
+
+		@Override
 		public void append(String append, int level) {
-			txt_area_log.append(append + "\n");
+
 		}
 
 	}
