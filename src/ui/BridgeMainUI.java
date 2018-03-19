@@ -98,7 +98,7 @@ public class BridgeMainUI {
 	private void initialize() {
 		mAdbManager = new AdbManager(new RefreshLogPanel());
 		frmApkautotestbridge = new JFrame();
-		frmApkautotestbridge.setTitle("ApkAutoTestBridge");
+		frmApkautotestbridge.setTitle("ApkAutoTestBridge  v0.2.180118");
 		frmApkautotestbridge.setBounds(100, 100, 982, 695);
 		frmApkautotestbridge.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmApkautotestbridge.getContentPane().setLayout(null);
@@ -126,15 +126,6 @@ public class BridgeMainUI {
 		});
 		button.setBounds(102, 10, 76, 23);
 		panel_control.add(button);
-
-		Button btn_refresh_ip = new Button("\u5237\u65B0\u672C\u673AIP");
-		btn_refresh_ip.setBounds(184, 10, 66, 23);
-		panel_control.add(btn_refresh_ip);
-		btn_refresh_ip.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				mAdbManager.runCommand("ipconfig ");
-			}
-		});
 
 		panel = new Panel();
 		panel.setBackground(Color.WHITE);

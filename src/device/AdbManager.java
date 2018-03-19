@@ -22,6 +22,16 @@ public class AdbManager {
 	}
 
 	public void runCommand(String command) {
+		// check device
+		int deviceNum = DeviceManager.getInstance().mDeviceList.size();
+		if(deviceNum==0) {
+			callback.append("→ error，没有设备连接！！！", 0);
+			return;
+		}else if(deviceNum>=2) {
+			callback.append("→ error，已连接设备太多！！！", 0);
+			return;
+		}
+			
 		// callback.append(exeCommand(command));
 		try {
 			exeCommandThread(command);
@@ -36,7 +46,7 @@ public class AdbManager {
 		StreamGobbler.GAME_SSO_REQUEST_CHECK = false;
 		StreamGobbler.GAME_FILE_CHECK = false;
 		StreamGobbler.isProcessAlive = false;
-		
+
 		callback.append("--------stop cmd process--------", 0);
 	}
 

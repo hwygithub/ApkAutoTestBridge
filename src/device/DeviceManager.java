@@ -27,7 +27,7 @@ public class DeviceManager {
 	 */
 	private DeviceChangeListener deviceChangeListener;
 	private RefreshUICallback callback;
-	private HashMap<String, String> mDeviceList;
+	public HashMap<String, String> mDeviceList;
 
 	/**
 	 * 私有构造函数
